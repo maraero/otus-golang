@@ -15,21 +15,25 @@ func Unpack(input string) (string, error) {
 	symbol := ""
 
 	for _, char := range input {
-		isDigit := unicode.IsDigit(char)
-		isPreviuousSymbolEmpty := symbol == ""
+		isCurrentSymbolDigit := unicode.IsDigit(char)
+		isPreviousSymbolEmpty := symbol == ""
 
 		switch {
-		case isDigit && isPreviuousSymbolEmpty:
+		case isCurrentSymbolDigit && isPreviousSymbolEmpty:
 			return "", ErrInvalidString
-		case isDigit && !isPreviuousSymbolEmpty:
-			mult, _ := strconv.Atoi(string(char))
+		case isCurrentSymbolDigit && !isPreviousSymbolEmpty:
+			mult, err := strconv.Atoi(string(char))
+
+			if err != nil {
+				return "", err
+			}
 
 			result.WriteString(strings.Repeat(symbol, mult))
 
 			symbol = ""
-		case !isDigit && isPreviuousSymbolEmpty:
+		case !isCurrentSymbolDigit && isPreviousSymbolEmpty:
 			symbol = string(char)
-		case !isDigit && !isPreviuousSymbolEmpty:
+		case !isCurrentSymbolDigit && !isPreviousSymbolEmpty:
 			result.WriteString(symbol)
 
 			symbol = string(char)
