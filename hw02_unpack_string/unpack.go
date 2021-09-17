@@ -22,10 +22,10 @@ func Unpack(input string) (string, error) {
 		case isCurrentSymbolDigit && isPreviousSymbolEmpty:
 			return "", ErrInvalidString
 		case isCurrentSymbolDigit && !isPreviousSymbolEmpty:
-			mult, err := strconv.Atoi(string(char))
+			mult, e := strconv.Atoi(string(char))
 
-			if err != nil {
-				return "", err
+			if e != nil {
+				return "", e
 			}
 
 			result.WriteString(strings.Repeat(symbol, mult))
