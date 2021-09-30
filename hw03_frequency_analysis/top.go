@@ -10,16 +10,10 @@ func Top10(text string) []string {
 
 	words := strings.Fields(text)
 
-	frequenciesByWords := map[string]int{}
+	frequenciesByWords := make(map[string]int)
 
 	for _, word := range words {
-		_, ok := frequenciesByWords[word]
-
-		if ok {
-			frequenciesByWords[word]++
-		} else {
-			frequenciesByWords[word] = 1
-		}
+		frequenciesByWords[word]++
 	}
 
 	wordsByFrequencies := make(map[int][]string)
