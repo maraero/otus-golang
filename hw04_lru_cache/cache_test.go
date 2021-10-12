@@ -20,15 +20,27 @@ func TestCache(t *testing.T) {
 		require.False(t, ok)
 	})
 
-	// t.Run("add single value to the cache", func(t *testing.T) {
+	t.Run("add single value to the cache", func(t *testing.T) {
+		c := NewCache(10)
+
+		success := c.Set("aaa", 10)
+		require.False(t, success)
+
+		val, ok := c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, val, 10)
+	})
+
+	// t.Run("update value in the queue of the cache", func(t *testing.T) {
 	// 	c := NewCache(10)
 
-	// 	success := c.Set("aaa", 10)
-	// 	require.True(t, success)
+	// 	c.Set("aaa", 10)
+	// 	c.Set("bbb", 20)
+	// 	c.Set("aaa", 30)
 
 	// 	val, ok := c.Get("aaa")
 	// 	require.True(t, ok)
-	// 	require.Equal(t, 10, val)
+	// 	require.Equal(t, val, 10)
 	// })
 
 	// t.Run("simple", func(t *testing.T) {
