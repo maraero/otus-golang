@@ -3,22 +3,26 @@ package hw04lrucache
 type Key string
 
 type Cache interface {
-	Set(key Key, value interface{}) bool
+	// Set(key Key, value interface{}) bool
 	Get(key Key) (interface{}, bool)
-	Clear()
+	// Clear()
 }
 
 type lruCache struct {
-	Cache // Remove me after realization.
-
 	capacity int
 	queue    List
 	items    map[Key]*ListItem
 }
 
-type cacheItem struct {
-	key   string
-	value interface{}
+// type cacheItem struct {
+// 	key   Key
+// 	value interface{}
+// }
+
+func (c *lruCache) Get(key Key) (interface{}, bool) {
+	val, ok := c.items[key]
+
+	return val, ok
 }
 
 func NewCache(capacity int) Cache {
