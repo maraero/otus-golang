@@ -5,7 +5,7 @@ type Key string
 type Cache interface {
 	Set(key Key, value interface{}) bool
 	Get(key Key) (interface{}, bool)
-	// Clear()
+	Clear()
 }
 
 type lruCache struct {
@@ -20,23 +20,44 @@ type cacheItem struct {
 }
 
 func (c *lruCache) Get(key Key) (interface{}, bool) {
-	if val, ok := c.items[key]; ok {
-		return val.Value, ok
+	if c.items[key] == nil {
+		return nil, false
+	}
+
+	if actualVal, ok := c.items[key].Value.(cacheItem); ok {
+		return actualVal.Value, ok
 	}
 
 	return nil, false
 }
 
 func (c *lruCache) Set(key Key, value interface{}) bool {
-	if _, exists := c.Get(key); exists {
-		c.items[key].Value = value
-		c.queue.MoveToFront(c.items[key])
+	if _, exists := c.items[key]; exists {
+		item := c.items[key]
+		item.Value = cacheItem{Value: value, Key: key}
+		c.queue.MoveToFront(item)
 		return true
 	}
 
-	c.items[key] = &ListItem{Value: value}
-	c.queue.PushFront(c.items[key])
+	if c.queue.Len() == c.capacity {
+		lastItem := c.queue.Back()
+		c.queue.Remove(lastItem)
+
+		valWithKey, ok := lastItem.Value.(cacheItem)
+
+		if ok {
+			delete(c.items, valWithKey.Key)
+		}
+	}
+
+	item := c.queue.PushFront(cacheItem{Value: value, Key: key})
+	c.items[key] = item
 	return false
+}
+
+func (c *lruCache) Clear() {
+	c.items = make(map[Key]*ListItem, c.capacity)
+	c.queue = NewList()
 }
 
 func NewCache(capacity int) Cache {
