@@ -39,7 +39,9 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 		return true
 	}
 
-	if c.queue.Len() == c.capacity {
+	item := c.queue.PushFront(cacheItem{Value: value, Key: key})
+
+	if c.queue.Len() > c.capacity {
 		lastItem := c.queue.Back()
 		c.queue.Remove(lastItem)
 
@@ -50,7 +52,6 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 		}
 	}
 
-	item := c.queue.PushFront(cacheItem{Value: value, Key: key})
 	c.items[key] = item
 	return false
 }
