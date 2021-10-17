@@ -10,6 +10,8 @@ var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
 type Task func() error
 
 func handleTask(chTasks chan Task, chErrors chan error, chDone chan struct{}, wg *sync.WaitGroup) {
+	wg.Add(1)
+
 	for {
 		select {
 		case <-chDone:
@@ -35,16 +37,14 @@ func Run(tasks []Task, n int, m int) error {
 		wg.Wait()
 	}()
 
-	wg.Add(n)
-
-	for i := 1; i <= n; i++ {
+	for i := 0; i < n; i++ {
 		go handleTask(chTasks, chErrors, chDone, &wg)
 	}
 
 	for _, t := range tasks {
 		chTasks <- t
 
-		if m > 0 && len(chErrors) >= m {
+		if len(chErrors) >= m {
 			return ErrErrorsLimitExceeded
 		}
 	}
