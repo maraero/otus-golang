@@ -44,7 +44,7 @@ func Run(tasks []Task, n int, m int) error {
 	for _, t := range tasks {
 		chTasks <- t
 
-		if len(chErrors) >= m {
+		if m > 0 && len(chErrors) >= m {
 			return ErrErrorsLimitExceeded
 		}
 	}
