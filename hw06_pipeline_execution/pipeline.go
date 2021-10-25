@@ -12,7 +12,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	out := in
 
 	for _, stage := range stages {
-		out = func(done In, in In, stage Stage) (out Out) {
+		out = func(in In, stage Stage) (out Out) {
 			ch := make(chan interface{})
 
 			go func(ch chan interface{}) {
@@ -32,7 +32,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 			}(ch)
 
 			return stage(ch)
-		}(done, out, stage)
+		}(out, stage)
 	}
 
 	return out
