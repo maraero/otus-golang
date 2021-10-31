@@ -15,7 +15,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 		return in
 	}
 
-	var out = in
+	out := in
 
 	for _, stage := range stages {
 		out = stage(doneStage(out, done))
